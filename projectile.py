@@ -38,9 +38,12 @@ class EProjectile(pygame.sprite.Sprite):
         self.rect.x = 9000
     def check_hit(self,group):
         if pygame.sprite.spritecollide(self,group, True, collided=pygame.sprite.collide_mask):
-            pass
-    def check_hit_group(self,group1):
-        if pygame.sprite.spritecollide(self,group1, True, collided=pygame.sprite.collide_mask):
+            return True
+        else:
+            return False
+        
+    def check_hit_group(self,group1,group2):
+        if pygame.sprite.groupcollide(self,group1,group2,True,True, collided=pygame.sprite.collide_mask):
             return True
         else:
             return False
