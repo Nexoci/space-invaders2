@@ -15,11 +15,17 @@ class Player(pygame.sprite.Sprite):
         key_input = pygame.key.get_pressed()
         self.movex = (key_input[pygame.K_LEFT] * -self.speed) + (key_input[pygame.K_RIGHT] * self.speed)
         self.rect.x += self.movex
+    def dead(self):
+        self.kill()
+        self.rect.x=10000
     def check_hit(self,group):
         if pygame.sprite.spritecollide(self,group, False, collided=pygame.sprite.collide_mask):
             return True
         else:
             return False
+    def bullet_strike(self,group):
+        if pygame.sprite.spritecollide(self,group, False, collided=pygame.sprite.collide_mask):
+            return True
         
 class Health(pygame.sprite.Sprite):
     def __init__(self, startX,startY,width,height,image1,image2,image3,image4,h_amount=2):
