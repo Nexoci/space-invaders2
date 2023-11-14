@@ -21,15 +21,15 @@ class Blockers(pygame.sprite.Sprite):
         self.health=hits
     def damage(self):
         self.health -= 1
-        if self.health == 3:
+        if self.health == 8:
             self.image = self.image2
-        elif self.health == 2:
+        elif self.health == 6:
             self.image = self.image3
-        elif self.health == 1:
+        elif self.health == 4:
             self.image = self.image4
-        elif self.health == 0:
+        elif self.health == 2:
             self.image = self.image5
-        else:
+        if self.health == 1:
             self.kill()
             self.rect.x = 9000
     def check_hit(self,group1):
