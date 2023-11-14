@@ -60,17 +60,17 @@ Enemy_bullet =pygame.sprite.Group()
 window = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT), pygame.HWSURFACE)
 font = pygame.font.SysFont('Consolas', 30)
 billy=Player(350,600,125,75,"images/billy.png",10)
-alien2=Evil(85,200,125,100,"images/enemy.png",10)
-alien3=Evil(150,200,125,100,"images/enemy.png",10)
-alien4=Evil(215,200,125,100,"images/enemy.png",10)
-alien5=Evil(280,200,125,100,"images/enemy.png",10)
-alien6=Evil(345,200,125,100,"images/enemy.png",10)
-alien7=Evil(410,200,125,100,"images/enemy.png",10)
-alien8=Evil(475,200,125,100,"images/enemy.png",10)
-alien9=Evil(540,200,125,100,"images/enemy.png",10)
-blocker1= Blockers(300,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",4)
-blocker2= Blockers(560,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",4)
-blocker3= Blockers(10,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",4)
+alien2=Evil(85,200,125,100,"images/enemy.png",5)
+alien3=Evil(150,200,125,100,"images/enemy.png",5)
+alien4=Evil(215,200,125,100,"images/enemy.png",5)
+alien5=Evil(280,200,125,100,"images/enemy.png",5)
+alien6=Evil(345,200,125,100,"images/enemy.png",5)
+alien7=Evil(410,200,125,100,"images/enemy.png",5)
+alien8=Evil(475,200,125,100,"images/enemy.png",5)
+alien9=Evil(540,200,125,100,"images/enemy.png",5)
+blocker1= Blockers(300,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",10)
+blocker2= Blockers(560,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",10)
+blocker3= Blockers(10,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",10)
 Healthbars= Health(50,740,600,50,"images/healthbar.png","images/healthbar2.png","images/healthbar3.png","images/healthbarD.png")
 spaceback=backround(WINDOW_WIDTH,WINDOW_HEIGHT,"images/spacers.jpg")
 help= stillimage(105,390,500,400,"images/help.png")
@@ -102,7 +102,7 @@ def display():
     blocker_group.draw(window)
     Enemy_bullet.draw(window)
     #gridHelp(window,WINDOW_WIDTH,WINDOW_HEIGHT)
-
+damage=3
 done=False
 while not done:
     window.fill((255,255,255))
@@ -117,7 +117,7 @@ while not done:
             sys.exit()
     pygame.display.update()
     fpsClock.tick(fps)
-
+E_bullet=None
 while True:
     display()
     cooldown=cooldown-1
@@ -133,12 +133,17 @@ while True:
         if blockers.check_hit(Enemy_bullet):
             blockers.damage()
             E_bullet.kill()
+        hit_list = pygame.sprite.spritecollide(blockers, Enemy_bullet, True, pygame.sprite.collide_mask)
     for alien in alien_group:
         alien.move()
-        num = random.randint(1,100)
+        num = random.randint(1,500)
         if alien.check_hit(collision_group):
             alien.move()
-        if num == (50):
+            alien.rect.y += 15
+        if alien.check_hit(projectile_group):
+            alien.kill()
+            bullet.kill()
+        if num == (1):
             E_bullet = EProjectile((alien.rect.x + 33), (alien.rect.centery - 40), 60, 32, "images/E_bullet.png")
             Enemy_bullet.add(E_bullet)
     key_input = pygame.key.get_pressed()
@@ -150,12 +155,23 @@ while True:
             bullet.kill()
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = pygame.mouse.get_pos()
-    pygame.sprite.groupcollide(projectile_group,alien_group,True,True, collided=pygame.sprite.collide_mask)
     if billy.check_hit(collision_group):
         billy.back()
-    if billy.check_hit(Enemy_bullet):
-        E_bullet.kill()
+    hit_list = pygame.sprite.spritecollide(billy, Enemy_bullet, True, pygame.sprite.collide_mask)
+    for E_bullet in hit_list:
+        damage-=1
         Healthbars.healthhit()
+        if damage == 0:
+            billy.dead()
+    #if billy.bullet_strike(Enemy_bullet):
+        #damage-=1
+        #Healthbars.healthhit()
+        #E_bullet.kill()
+        #if damage == 0:
+            #billy.dead()
+    #if billy.check_hit(Enemy_bullet):
+        #E_bullet.kill()
+        
 
             
         
