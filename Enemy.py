@@ -11,6 +11,7 @@ class Evil(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(startX,startY))
         self.speed = speed
         self.direction=False
+        self.row = 0
     def move(self):
         if self.direction:
             self.rect.x-=self.speed
