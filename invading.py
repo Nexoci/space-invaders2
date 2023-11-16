@@ -61,12 +61,15 @@ Enemy_bullet =pygame.sprite.Group()
 window = pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT), pygame.HWSURFACE)
 backgroundgif = gifguy.loadGIF('images/spacevader.gif')
 back = gifguy.AnimatedSpriteObject(0,0,WINDOW_WIDTH, WINDOW_HEIGHT, backgroundgif)
-font = pygame.font.SysFont('Consolas', 30)
+backgroundstart = gifguy.loadGIF('images/startback.gif')
+back2 = gifguy.AnimatedSpriteObject(0,0,WINDOW_WIDTH, WINDOW_HEIGHT, backgroundstart)
+
+font = pygame.font.SysFont('Fixedsys', 30)
 billy=Player(350,600,125,75,"images/billy.png",10)
 for i in range(85,540,65):
-    alien_group.add(Evil(i,200,125,100,"images/enemy.png",10))
-    alien_group.add(Evil(i,250,125,100,"images/enemy.png",10))
-    alien_group.add(Evil(i,300,125,100,"images/enemy.png",10))
+    alien_group.add(Evil(i,200,125,100,"images/enemy1.png",5))
+    alien_group.add(Evil(i,250,125,100,"images/enemy1.png",5))
+    alien_group.add(Evil(i,300,125,100,"images/enemy1.png",5))
 
 blocker1= Blockers(300,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",6)
 blocker2= Blockers(560,475,125,125,"blockers/good.png","blockers/hit.png","blockers/broken.png","blockers/damaged.png","blockers/destroyed.png",6)
@@ -76,16 +79,14 @@ help= stillimage(105,390,500,400,"images/help.png")
 author= stillimage(275,75,150,100,"images/author.png")
 btn_ply= imagebutton(225,100,250,250,"images/play.png","images/playclicked.png",next)
 btn_ext= imagebutton(225,200,250,250,"images/exits.png","images/exitclicked.png",exit)
-startback=backround(WINDOW_WIDTH,WINDOW_HEIGHT,"images/startback.jpg")
 collidewalls=backround(WINDOW_WIDTH,WINDOW_HEIGHT,"images/collide.png")
 title= stillimage(125,0,500,250,"images/title.png")
 blocker_group.add(blocker1,blocker2,blocker3)
 player_group.add(billy)
-#alien_group.add(alien2,alien3,alien4,alien5,alien6,alien7,alien8,alien9)
 space_group.add(back)
 Health_group.add(Healthbars)
 start_btn.add(btn_ply,btn_ext)
-start_group.add(startback,title,help,author)
+start_group.add(back2,title,help,author)
 collision_group.add(collidewalls)
 pygame.display.set_caption("Space Invaders")
 pygame.display.set_icon(Icon)
@@ -100,6 +101,7 @@ def display():
     Health_group.draw(window)
     blocker_group.draw(window)
     Enemy_bullet.draw(window)
+    window.blit(font.render(f"Points: {points}", True, (255, 255, 255)), (0, 0))
     #gridHelp(window,WINDOW_WIDTH,WINDOW_HEIGHT)
 damage=3
 done=False
@@ -116,6 +118,7 @@ while not done:
             sys.exit()
     pygame.display.update()
     fpsClock.tick(fps)
+    start_group.update(30)
 E_bullet=None
 while True:
     display()
@@ -125,16 +128,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-    for blockers in blocker_group:
-        if blockers.check_hit(projectile_group):
-            blockers.damage()
-            bullet.kill()
-        if blockers.check_hit(Enemy_bullet):
-            blockers.damage()
-            E_bullet.kill()
     
-        if pygame.sprite.spritecollide(collidewalls, alien_group, False, pygame.sprite.collide_mask):
-            row+=1
+    if pygame.sprite.spritecollide(collidewalls, alien_group, False, pygame.sprite.collide_mask):
+        row+=1
             
     for alien in alien_group:
         #alien.move()
@@ -154,6 +150,13 @@ while True:
         if num == (1):
             E_bullet = EProjectile((alien.rect.x + 33), (alien.rect.centery - 40), 60, 32, "images/E_bullet.png")
             Enemy_bullet.add(E_bullet)
+    for blockers in blocker_group:
+        if blockers.check_hit(projectile_group):
+            blockers.damage()
+            bullet.kill()
+        if blockers.check_hit(Enemy_bullet):
+            pygame.sprite.spritecollide(blockers, Enemy_bullet, True, pygame.sprite.collide_mask)
+            blockers.damage()
     key_input = pygame.key.get_pressed()
     if key_input[pygame.K_SPACE] and cooldown<0:
         bullet = Projectile((billy.rect.x+33), (billy.rect.centery-40),60,32,"images/bullet.png")

@@ -21,6 +21,7 @@ class Blockers(pygame.sprite.Sprite):
         self.health=hits
     def damage(self):
         self.health -= 1
+
         if self.health == 4:
             self.image = self.image2
         elif self.health == 3:
